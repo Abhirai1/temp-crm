@@ -1,0 +1,1820 @@
+{% extends 'workload/elements/layouts/admin.html' %}
+{% load static %}
+
+{% block additional_css %}
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/css/flag-icon.min.css">
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+
+<!-- style  -->
+<link rel="stylesheet" href="{% static 'workload/css/custom/planset-modal.css' %}">
+<!-- js  -->
+ <!-- boostrap js -->
+ <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="{% static 'workload/js/Planset/planset-modal.js' %}"></script>
+<script src="{% static 'workload/js/Planset/planset-form-navigation.js' %}"></script>
+<script src="{% static 'workload/js/Planset/planset-sitePage.js' %}"></script>
+<script src="{% static 'workload/js/Planset/planset-structuralPage.js' %}"></script>
+<script src="{% static 'workload/js/Planset/planset-electricalPage.js' %}"></script>
+<script src="{% static 'workload/js/Planset/planset-sitePage-APIs.js' %}"></script>
+<script src="{% static 'workload/js/Planset/planset-attachment.js' %}"></script>
+<script src="{% static 'workload/js/Planset/planset-roof-dublicate-add.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+<div class="content-body">
+
+    <div class="container-fluid">
+
+        <div class="row justify-content-center align-items-center">
+            <div class="col-xl-12 col-xxl-12">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="d-flex justify-content-between align-items-center w-100">
+                            <h4 class="card-title m-0" id="formStepTitle">Create Planset</h4>
+
+                            <button type="button" class="close" id="closeForm" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+
+                        <div class="default-tab">
+                            <ul class="nav nav-pills justify-content-evenly">
+                                <li class="nav-item">
+                                    <a class="nav-link active" data-page="0" href="#site-info"
+                                        style="font-size: x-large;">
+                                        <i class="la la-home me-2"></i> Site Information
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" data-page="1" href="#structural-info"
+                                        style="font-size: x-large;">
+                                        <i class="la la-user me-2"></i> Structural Information
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" data-page="2" href="#electrical-info"
+                                        style="font-size: x-large;">
+                                        <i class="la la-phone me-2"></i> Electrical Information
+                                    </a>
+                                </li>
+                            </ul>
+                            <hr>
+                            <form id="multi-page-form">
+                                <div class="tab-content p-4">
+
+                                    <!-- form page 1 -->
+
+                                    <div class="tab-pane fade show active form-page" id="site-info" role="tabpanel">
+                                        <div class="pt-4">
+                                            <div class="row">
+                                                <div class="col-lg-6">
+                                                    <div class="row">
+                                                        <div class="col-lg-12">
+                                                            <div class="row">
+                                                                <div class="col-lg-6 mb-2">
+                                                                    <div class="mb-3">
+                                                                        <label class="text-label form-label">Company
+                                                                            Name*</label>
+                                                                        <select class="form-control" name="company_name"
+                                                                            id="id_company_name" required>
+                                                                            <option selected="">Choose...</option>
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-lg-6 mb-2">
+                                                                    <div class="mb-3">
+                                                                        <label class="text-label form-label">Lead
+                                                                            id*</label>
+                                                                        <input type="text" name="Lead_id"
+                                                                            class="form-control" placeholder="Lead id"
+                                                                            required>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <h4 class="text-primary mb-4"
+                                                                    style="font-size: x-large;">Homeowner Information
+                                                                </h4>
+
+                                                                <div class="col-lg-6 mb-2">
+                                                                    <div class="mb-3">
+                                                                        <label class="text-label form-label">Customer
+                                                                            Name*</label>
+                                                                        <input type="text" name="customer"
+                                                                            class="form-control"
+                                                                            placeholder="Customer Name" required>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-lg-6 mb-2">
+                                                                    <div class="mb-3">
+                                                                        <label class="text-label form-label">Customer
+                                                                            Email</label>
+                                                                        <input type="email" name="customer_email"
+                                                                            class="form-control"
+                                                                            placeholder="example@gmail.com">
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="col-lg-6 mb-2">
+                                                                    <div class="mb-3">
+                                                                        <label class="text-label form-label">Customer
+                                                                            Phone Number</label>
+                                                                        <div class="input-group">
+                                                                            <select
+                                                                                class="form-select country-select pe-0"
+                                                                                id="id_country_id_2"
+                                                                                name="phn_country_code"
+                                                                                style="max-width: 85px;">
+                                                                                <option value="">Select</option>
+                                                                                <!-- Countries will be populated here dynamically -->
+                                                                            </select>
+                                                                            <input type="tel" placeholder="Phone Number"
+                                                                                name="customer_mobile"
+                                                                                class="form-control" id="id_mobile_2">
+                                                                        </div>
+                                                                    </div>
+
+                                                                </div>
+                                                                <div class="col-lg-6 mb-2">
+                                                                    <div class="mb-3">
+                                                                        <label class="text-label form-label">Site
+                                                                            Address as per utility bill*</label>
+                                                                        <input type="text" class="form-control"
+                                                                            name="utility_bill_address"
+                                                                            aria-describedby="inputGroupPrepend2"
+                                                                            placeholder="Address" required>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="col-lg-6 mb-2">
+                                                                    <div class="mb-3">
+                                                                        <label
+                                                                            class="text-label form-label">City*</label>
+                                                                        <select class="form-control" id="" name="" id=""
+                                                                            required>
+                                                                            <option selected="">Choose...</option>
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-lg-6 mb-2">
+                                                                    <div class="mb-3">
+                                                                        <label
+                                                                            class="text-label form-label">State*</label>
+                                                                        <select class="form-control" id="" name="" id=""
+                                                                            required>
+                                                                            <option selected="">Choose...</option>
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="col-lg-6 mb-2">
+                                                                    <div class="mb-3">
+                                                                        <label class="text-label form-label">APN
+                                                                            Number*</label>
+                                                                        <input type="text" class="form-control"
+                                                                            name="apn_number" id="inputGroupPrepend2"
+                                                                            aria-describedby="inputGroupPrepend2"
+                                                                            placeholder="Enter APN Number" required>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-lg-6 mb-2">
+                                                                    <div class="mb-3">
+                                                                        <label
+                                                                            class="text-label form-label">Coordinates*</label>
+                                                                        <input type="text" id="coordinates"
+                                                                            name="coordinates" class="form-control"
+                                                                            placeholder="Click on the map to set coordinates"
+                                                                            required>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-lg-6">
+                                                    <div class="col-lg-6">
+                                                        <div id="map"
+                                                            style="height: 100%; width: 800px; min-height: 600px; z-index: 0; border-radius: 25px">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-lg-12">
+                                                    <h4 class="text-primary mb-4" style="font-size: x-large;">
+                                                        Preliminary Information</h4>
+                                                    <div class="row mt-4">
+                                                        <div class="col-lg-3 mb-2">
+                                                            <div class="mb-3">
+                                                                <label class="text-label form-label">Authority Having
+                                                                    Jurisdiction*</label>
+                                                                <input type="text" class="form-control"
+                                                                    name="authority_having_jurisdiction"
+                                                                    id="inputGroupPrepend2"
+                                                                    aria-describedby="inputGroupPrepend2"
+                                                                    placeholder="Enter AHJ" required>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-3 mb-2">
+                                                            <div class="mb-3">
+                                                                <label class="text-label form-label">Utility
+                                                                    Name*</label>
+                                                                <input type="text" class="form-control" name="utility"
+                                                                    id="inputGroupPrepend2"
+                                                                    aria-describedby="inputGroupPrepend2"
+                                                                    placeholder="Enter Utility" required>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-3 mb-2">
+                                                            <div class="mb-3">
+                                                                <label class="text-label form-label">Mount Type*</label>
+                                                                <select name="mount_type" class="form-control" required>
+                                                                    <option value="" disabled>Select Mount Type</option>
+                                                                    <option value="House Roof" selected>House Roof
+                                                                    </option>
+                                                                    <option value="Ground Mount">Ground Mount</option>
+                                                                    <option value="House Ground Mount">House Roof +
+                                                                        Ground Mount</option>
+                                                                    <option value="Carport">Carport</option>
+                                                                    <option value="Mobile Home">Mobile Home</option>
+
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-3 mb-2">
+                                                            <div class="mb-3">
+                                                                <!-- Enables a battery backup option  -->
+                                                                <label class="text-label form-label">Job Type*</label>
+                                                                <select id="jobTypeSelect" name="job_type"
+                                                                    class="form-control" required>
+                                                                    <option value="" disabled>Select Job Type</option>
+                                                                    <option value="PV" selected>PV</option>
+                                                                    <option value="PB">PV + Battery</option>
+                                                                    <option value="Battery">Battery</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Enabled when (PV or PV+Battery) is selected in Job Type  -->
+                                                    <div id="moduleManufacturerRow" class="row">
+                                                        <div class="col-lg-3 mb-2">
+                                                            <div class="mb-3">
+                                                                <label class="text-label form-label">Module
+                                                                    Manufacturer</label>
+                                                                <input type="text" name="module_manufacturer"
+                                                                    class="form-control" id="inputGroupPrepend2"
+                                                                    aria-describedby="inputGroupPrepend2"
+                                                                    placeholder="Enter Manufacturer">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-3 mb-2">
+                                                            <div class="mb-3">
+                                                                <label class="text-label form-label">Module Model
+                                                                    No.</label>
+                                                                <input type="text" name="module_model"
+                                                                    class="form-control" id="inputGroupPrepend2"
+                                                                    aria-describedby="inputGroupPrepend2"
+                                                                    placeholder="Enter Model No.">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-3 mb-2">
+                                                            <div class="mb-3">
+                                                                <label class="text-label form-label">Quantity</label>
+                                                                <input type="number" name="module_quantity"
+                                                                    class="form-control" id="inputGroupPrepend2"
+                                                                    aria-describedby="inputGroupPrepend2"
+                                                                    placeholder="Enter Quantity">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Always enabled  -->
+                                                    <div id="inverterSection">
+                                                        <div class="row inverter-row">
+                                                            <div class="col-lg-3 mb-2">
+                                                                <div class="mb-3">
+                                                                    <label class="text-label form-label">Inverter
+                                                                        Manufacturer</label>
+                                                                    <input type="text" name="inverter_manufacturer"
+                                                                        class="form-control"
+                                                                        placeholder="Enter Manufacturer">
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-lg-3 mb-2">
+                                                                <div class="mb-3">
+                                                                    <label class="text-label form-label">Inverter Model
+                                                                        No.</label>
+                                                                    <input type="text" name="inverter_model"
+                                                                        class="form-control"
+                                                                        placeholder="Enter Model No.">
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-lg-3 mb-2">
+                                                                <div class="mb-3">
+                                                                    <label
+                                                                        class="text-label form-label">Quantity</label>
+                                                                    <input type="number" name="inverter_quantity"
+                                                                        class="form-control"
+                                                                        placeholder="Enter Quantity">
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-lg-2 mb-2">
+                                                                <div class="mb-3">
+                                                                    <!-- Adds 1 more inverter-row  -->
+                                                                    <label class="text-label form-label">Add
+                                                                        Inverter</label>
+                                                                    <button type="button"
+                                                                        class="btn btn-primary form-control"
+                                                                        style="background: var(--primary);"
+                                                                        onclick="addInverter()">+ Inverter</button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="row">
+                                                        <div class="col-lg-3 mb-2 d-flex justify-content-center">
+                                                            <div class="mb-3">
+                                                                <div class="form-group">
+                                                                    <label for="want-optimizer"
+                                                                        style="font-weight: normal;">Do you want an
+                                                                        optimizer?</label>
+                                                                    <div class="toggle-container"
+                                                                        data-toggle="want-optimizer" required>
+                                                                        <div class="toggle">
+                                                                            <button type="button"
+                                                                                class="toggle-option active"
+                                                                                data-value="no">No</button>
+                                                                            <button type="button" class="toggle-option"
+                                                                                data-value="yes">Yes</button>
+                                                                            <div class="sliders"></div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <input type="hidden" id="want-optimizer"
+                                                                        name="want_optimizer" value="no">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <!-- Enabled when (Do you want an optimizer?) is selected yes -->
+                                                        <div class="col-lg-3 mb-2">
+                                                            <div class="mb-3" id="optimizer">
+                                                                <label class="text-label form-label">Optimizer</label>
+                                                                <select name="optimizer" class="form-control">
+                                                                    <option value="" disabled selected>Select Optimizer
+                                                                    </option>
+                                                                    <option value="">optimizer 1</option>
+                                                                    <option value="">optimizer 2</option>
+                                                                    <option value="">optimizer 3</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Enabled when (Battery or PV+Battery) is selected in Job Type  -->
+                                                    <div id="batterySection">
+                                                        <div class="row battery-row">
+                                                            <div class="col-lg-3 mb-2">
+                                                                <div class="mb-3">
+                                                                    <label class="text-label form-label">Battery
+                                                                        Manufacturer</label>
+                                                                    <input type="text" name="battery_manufacturer"
+                                                                        class="form-control"
+                                                                        placeholder="Enter Manufacturer">
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-lg-3 mb-2">
+                                                                <div class="mb-3">
+                                                                    <label class="text-label form-label">Battery Model
+                                                                        No.</label>
+                                                                    <input type="text" name="battery_model"
+                                                                        class="form-control"
+                                                                        placeholder="Enter Model No.">
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-lg-3 mb-2">
+                                                                <div class="mb-3">
+                                                                    <label
+                                                                        class="text-label form-label">Quantity</label>
+                                                                    <input type="number" name="battery_quantity"
+                                                                        class="form-control"
+                                                                        placeholder="Enter Quantity">
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-lg-2 mb-2">
+                                                                <div class="mb-3">
+                                                                    <!-- Adds 1 more battery-row  -->
+                                                                    <label class="text-label form-label">Add
+                                                                        Battery</label>
+                                                                    <button type="button"
+                                                                        class="btn btn-primary form-control"
+                                                                        onclick="addBattery()"
+                                                                        style="background: var(--primary);">+
+                                                                        Battery</button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="row">
+                                                        <div class="col-lg-3 mb-2">
+                                                            <h5 class="text-primary d-inline">Governing Codes*</h5>
+                                                            <textarea class="form-control p-3" name="governing_codes"
+                                                                id="governing-comments" rows="4"
+                                                                placeholder="Enter any Governing comments here"
+                                                                required></textarea>
+                                                        </div>
+                                                        <div
+                                                            class="col-lg-3 mb-2 p-3 d-flex align-items-center justify-content-center">
+                                                            <div class="mb-3">
+                                                                <div class="form-group">
+                                                                    <label for="property-type"
+                                                                        class="text-label form-label">Property
+                                                                        Type*</label>
+                                                                    <div class="toggle-container"
+                                                                        data-toggle="property-type" required>
+                                                                        <div class="toggle">
+                                                                            <button type="button"
+                                                                                class="toggle-option active"
+                                                                                data-value="Residential">Residential</button>
+                                                                            <button type="button" class="toggle-option"
+                                                                                data-value="Commercial">Commercial</button>
+                                                                            <div class="sliders"></div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <input type="hidden" id="property-type"
+                                                                        name="property_type" value="Residential">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div
+                                                            class="col-lg-3 mb-2 p-3 d-flex align-items-center justify-content-center">
+                                                            <div class="mb-3">
+                                                                <div class="form-group">
+                                                                    <label for="new-construction"
+                                                                        style="font-weight: normal;">New
+                                                                        Construction</label>
+                                                                    <div class="toggle-container"
+                                                                        data-toggle="new-construction" required>
+                                                                        <div class="toggle">
+                                                                            <button type="button"
+                                                                                class="toggle-option active"
+                                                                                data-value="no">No</button>
+                                                                            <button type="button" class="toggle-option"
+                                                                                data-value="yes">Yes</button>
+                                                                            <div class="sliders"></div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <input type="hidden" id="new-construction"
+                                                                        name="new_construction" value="no">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- Enabled when (Battery or PV+Battery) is selected in Job Type  -->
+                                                        <div class="col-lg-3 p-2 mb-2">
+                                                            <div class="mb-3" id="batteryBackupBox">
+                                                                <label class="text-label form-label">Battery
+                                                                    Backup</label>
+                                                                <select name="battery_backup" class="form-control">
+                                                                    <option value="" disabled selected>Select Battery
+                                                                        Backup Type</option>
+                                                                    <option value="Partial">Partial</option>
+                                                                    <option value="Whole">Whole</option>
+                                                                    <option value="No-Backup">No Backup</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="row">
+                                                        <div class="col-xl-4">
+                                                            <div class="card1">
+                                                                <div class="card-body p-3">
+                                                                    <div class="profile-interest">
+                                                                        <h6 class="text-primary d-inline">Proposal
+                                                                            Design File</h6>
+                                                                        <div class="row mt-4">
+                                                                            <div id="upload-container-proposal"
+                                                                                class="d-flex"
+                                                                                style="overflow-x: auto;width: 100%; gap: 10px; border-radius: 5px; padding: 10px;padding-top: 15px; height: 140px; border: 1px solid #dbd6d6; justify-content: center;">
+                                                                                <div id="upload-button-proposal"
+                                                                                    style="min-width: 100px; width: 120px; margin: 0; height: 100px; border: 2px dashed #ccc; display: flex; justify-content: center; align-items: center; cursor: pointer; text-align: center; border-radius: 5px;">
+                                                                                    <span>+ click to add or drop
+                                                                                        here</span>
+                                                                                </div>
+                                                                                <div id="preview-container-proposal"
+                                                                                    class="d-flex flex-nowrap"
+                                                                                    style="gap: 10px; overflow-x: auto;overflow-y: hidden; width: 80%; margin: 0; padding: 0;">
+                                                                                </div>
+                                                                            </div>
+
+                                                                            <input type="file" id="image-input-proposal"
+                                                                                multiple name="proposal_designs_file"
+                                                                                style="display: none;">
+                                                                            <div id="file-count-proposal" class="mt-2">0
+                                                                                files</div>
+                                                                        </div>
+
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xl-4">
+                                                            <div class="card1">
+                                                                <div class="card-body p-3">
+                                                                    <div class="profile-interest">
+                                                                        <h6 class="text-primary d-inline">Sitesurvey
+                                                                            Attachments</h6>
+                                                                        <div class="row mt-4">
+                                                                            <div class="col-lg-12">
+                                                                                <div id="upload-container-sitesurvey"
+                                                                                    class="d-flex"
+                                                                                    style="overflow-x: auto; width: 100%; gap: 10px; border-radius: 5px; padding: 10px;padding-top: 15px; height: 140px; border: 1px solid #dbd6d6; justify-content: center;">
+                                                                                    <div id="upload-button-sitesurvey"
+                                                                                        style="min-width: 100px; width: 120px; height: 100px; border: 2px dashed #ccc; display: flex; justify-content: center; align-items: center; cursor: pointer; text-align: center; border-radius: 5px;">
+                                                                                        <span>+ click to add or drop
+                                                                                            here</span>
+                                                                                    </div>
+                                                                                    <div id="preview-container-sitesurvey"
+                                                                                        class="d-flex flex-nowrap"
+                                                                                        style="gap: 10px;overflow-x: scoll;overflow-y: hidden; width: 80%; margin: 0; padding: 0;">
+                                                                                    </div>
+                                                                                </div>
+                                                                                <input type="file"
+                                                                                    id="image-input-sitesurvey" multiple
+                                                                                    name="site_survey_attachments"
+                                                                                    style="display: none;">
+                                                                                <div id="file-count-sitesurvey"
+                                                                                    class="mt-2">0 files
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xl-4">
+                                                            <div class="card1">
+                                                                <div class="card-body p-3">
+                                                                    <div class="profile-interest">
+                                                                        <h6 class="text-primary d-inline">Architectural
+                                                                            Attachments</h6>
+                                                                        <div class="row mt-4">
+                                                                            <div class="col-lg-12">
+                                                                                <div id="upload-container-architectural"
+                                                                                    class="d-flex"
+                                                                                    style="overflow-x: auto; width: 100%; gap: 10px; border-radius: 5px; padding: 10px;padding-top: 15px; height: 140px; border: 1px solid #dbd6d6; justify-content: center;">
+                                                                                    <div id="upload-button-architectural"
+                                                                                        style="min-width: 100px; width: 120px; height: 100px; border: 2px dashed #ccc; display: flex; justify-content: center; align-items: center; cursor: pointer; text-align: center; border-radius: 5px;">
+                                                                                        <span>+ click to add or drop
+                                                                                            here</span>
+                                                                                    </div>
+                                                                                    <div id="preview-container-architectural"
+                                                                                        class="d-flex flex-nowrap"
+                                                                                        style="gap: 10px;overflow-x: scoll;overflow-y: hidden; width: 80%; margin: 0; padding: 0;">
+                                                                                    </div>
+                                                                                </div>
+                                                                                <input type="file"
+                                                                                    id="image-input-architectural"
+                                                                                    multiple
+                                                                                    name="architectural_attachments"
+                                                                                    style="display: none;">
+                                                                                <div id="file-count-architectural"
+                                                                                    class="mt-2">0 files
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="row">
+                                                        <div class="col-lg-3 mb-2 p-3 d-flex justify-content-center">
+                                                            <div class="mb-3">
+                                                                <div class="form-group">
+                                                                    <h5 class="text-primary">Do you have Existing Solar
+                                                                        System?</h5>
+                                                                    <div class="toggle-container"
+                                                                        data-toggle="existing-solar-fields" required>
+                                                                        <div class="toggle">
+                                                                            <button type="button" id="existing-solar-no"
+                                                                                class="toggle-option active"
+                                                                                data-value="no">No</button>
+                                                                            <button type="button"
+                                                                                id="existing-solar-yes"
+                                                                                class="toggle-option"
+                                                                                data-value="yes">Yes</button>
+                                                                            <div class="sliders"></div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <input type="hidden" id="existing-solar-fields"
+                                                                        name="existing_solar_fields" value="no">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Enabled when (Do you have Existing Solar System?) is selected yes -->
+                                                    <div id="existing-solar-fields">
+                                                        <div id="moduleSection">
+                                                            <div class="row module-row">
+                                                                <div class="col-lg-3 mb-2">
+                                                                    <div class="mb-3">
+                                                                        <label class="text-label form-label">Module
+                                                                            Manufacturer</label>
+                                                                        <input type="text"
+                                                                            name="existing_module_manufacturer"
+                                                                            class="form-control" id="inputGroupPrepend2"
+                                                                            aria-describedby="inputGroupPrepend2"
+                                                                            placeholder="Enter Manufacturer">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-lg-3 mb-2">
+                                                                    <div class="mb-3">
+                                                                        <label class="text-label form-label">Module
+                                                                            Model No.</label>
+                                                                        <input type="text" name="existing_module_model"
+                                                                            class="form-control" id="inputGroupPrepend2"
+                                                                            aria-describedby="inputGroupPrepend2"
+                                                                            placeholder="Enter Model No.">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-lg-3 mb-2">
+                                                                    <div class="mb-3">
+                                                                        <label
+                                                                            class="text-label form-label">Quantity</label>
+                                                                        <input type="number"
+                                                                            name="existing_module_quantity"
+                                                                            class="form-control" id="inputGroupPrepend2"
+                                                                            aria-describedby="inputGroupPrepend2"
+                                                                            placeholder="Enter Quantity">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-lg-2 mb-2">
+                                                                    <div class="mb-3">
+                                                                        <!-- Adds 1 more module-row  -->
+                                                                        <label class="text-label form-label">Add
+                                                                            Module</label>
+                                                                        <button type="button"
+                                                                            class="btn btn-primary form-control"
+                                                                            onclick="addModule()"
+                                                                            style="background-color: var(--primary);">+
+                                                                            Module</button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Enabled when (Do you have Existing Solar System?) is selected yes -->
+                                                    <div id="existingInverterSection">
+                                                        <div class="row inverter-row">
+                                                            <div class="col-lg-3 mb-2">
+                                                                <div class="mb-3">
+                                                                    <label class="text-label form-label">Inverter
+                                                                        Manufacturer</label>
+                                                                    <input type="text"
+                                                                        name="existing_inverter_manufacturer"
+                                                                        class="form-control" id="inputGroupPrepend2"
+                                                                        aria-describedby="inputGroupPrepend2"
+                                                                        placeholder="Enter Manufacturer">
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-lg-3 mb-2">
+                                                                <div class="mb-3">
+                                                                    <label class="text-label form-label">Inverter Model
+                                                                        No.</label>
+                                                                    <input type="text" name="existing_inverter_model"
+                                                                        class="form-control" id="inputGroupPrepend2"
+                                                                        aria-describedby="inputGroupPrepend2"
+                                                                        placeholder="Enter Model No.">
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-lg-3 mb-2">
+                                                                <div class="mb-3">
+                                                                    <label
+                                                                        class="text-label form-label">Quantity</label>
+                                                                    <input type="number"
+                                                                        name="existing_inverter_quantity"
+                                                                        class="form-control" id="inputGroupPrepend2"
+                                                                        aria-describedby="inputGroupPrepend2"
+                                                                        placeholder="Enter Quantity">
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-lg-2 mb-2">
+                                                                <div class="mb-3">
+                                                                    <!-- Adds 1 more inverter-row  -->
+                                                                    <label class="text-label form-label">Add
+                                                                        Inverter</label>
+                                                                    <button type="button"
+                                                                        class="btn btn-primary form-control"
+                                                                        onclick="addExistingInverter()"
+                                                                        style="background-color: var(--primary);">+
+                                                                        Inverter</button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- form page 2 -->
+
+                                    <div class="tab-pane form-page" id="structural-info">
+                                        <div class="pt-4">
+                                            <div class="row">
+                                                <div class="col-xl-12">
+                                                    <div class="card">
+                                                        <div class="card-body p-0">
+                                                            <!-- Nav tabs -->
+                                                            <div class="custom-tab-1">
+                                                                <ul class="nav nav-tabs" id="#roofNavLinks" role="tablist">
+                                                                    <li class="nav-item">
+                                                                        <a class="nav-link active" data-bs-toggle="tab"
+                                                                            href="#roof1"> Roof 1</a>
+                                                                             <span class="close-tab" data-roof="1">&times;</span>
+                                                                    </li>
+                                                                </ul>
+                                                                <div class="tab-content">
+
+                                                                    <div class="row d-flex justify-content-end mt-3">
+                                                                        <button id="#dublicateRoofButton" class="btn btn-secondary mx-1 border-0"
+                                                                            type="button"
+                                                                            style="padding: 0.625rem; border-radius: 0.25rem; max-width: 150px; font-size: 14px; font-weight: 500;">+
+                                                                            Duplicate Roof</button>
+                                                                        <button id="#addRoofButton" class="btn btn-primary mx-1 border-0"
+                                                                            type="button"
+                                                                            style="padding: 0.625rem; border-radius: 0.25rem; max-width: 150px; font-size: 14px; font-weight: 500;">+
+                                                                            Add Roof</button>
+                                                                    </div>
+
+                                                                    <div class="tab-content" id="#roofParent">
+                                                                        <!-- roof1 -->
+                                                                        <div class="tab-pane fade show active" id="roof1"
+                                                                        role="tabpanel">
+                                                                        <div class="pt-4">
+                                                                            <div class="col-xl-12">
+
+                                                                                <div class="row">
+                                                                                    <div class="roof-type-container">
+                                                                                        <h3>Roof type*</h3>
+                                                                                        <div class="roof-type-selector">
+                                                                                            <div class="roof-type-option"
+                                                                                                required>
+                                                                                                <input type="radio"
+                                                                                                    id="pitched-hip"
+                                                                                                    name="roof_type"
+                                                                                                    value="Pitched-Hip">
+                                                                                                <label
+                                                                                                    for="pitched-hip">
+                                                                                                    <div
+                                                                                                        class="roof-image pitched-hip">
+                                                                                                    </div>
+                                                                                                    <span>Pitched-Hip</span>
+                                                                                                </label>
+                                                                                            </div>
+                                                                                            <div
+                                                                                                class="roof-type-option">
+                                                                                                <input type="radio"
+                                                                                                    id="pitched-gable"
+                                                                                                    name="roof_type"
+                                                                                                    value="Pitched-Gable">
+                                                                                                <label
+                                                                                                    for="pitched-gable">
+                                                                                                    <div
+                                                                                                        class="roof-image pitched-gable">
+                                                                                                    </div>
+                                                                                                    <span>Pitched-Gable</span>
+                                                                                                </label>
+                                                                                            </div>
+                                                                                            <div
+                                                                                                class="roof-type-option">
+                                                                                                <input type="radio"
+                                                                                                    id="flat"
+                                                                                                    name="roof_type"
+                                                                                                    value="flat">
+                                                                                                <label for="flat">
+                                                                                                    <div
+                                                                                                        class="roof-image flat">
+                                                                                                    </div>
+                                                                                                    <span>Flat</span>
+                                                                                                </label>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div
+                                                                                        class="roof-material-container">
+                                                                                        <h3>Roof material*</h3>
+                                                                                        <div class="roof-material-selector"
+                                                                                            required>
+                                                                                            <div
+                                                                                                class="roof-material-option">
+                                                                                                <input type="radio"
+                                                                                                    id="comp-shingle"
+                                                                                                    name="roof_material"
+                                                                                                    value="comp-shingle">
+                                                                                                <label
+                                                                                                    for="comp-shingle">
+                                                                                                    <div
+                                                                                                        class="roof-material-image comp-shingle">
+                                                                                                    </div>
+                                                                                                    <span>Comp-Shingle</span>
+                                                                                                </label>
+                                                                                            </div>
+                                                                                            <div
+                                                                                                class="roof-material-option">
+                                                                                                <input type="radio"
+                                                                                                    id="flat-tile"
+                                                                                                    name="roof_material"
+                                                                                                    value="flat-tile">
+                                                                                                <label for="flat-tile">
+                                                                                                    <div
+                                                                                                        class="roof-material-image flat-tile">
+                                                                                                    </div>
+                                                                                                    <span>Flat-Tile</span>
+                                                                                                </label>
+                                                                                            </div>
+                                                                                            <div
+                                                                                                class="roof-material-option">
+                                                                                                <input type="radio"
+                                                                                                    id="s-tile"
+                                                                                                    name="roof_material"
+                                                                                                    value="s-tile">
+                                                                                                <label for="s-tile">
+                                                                                                    <div
+                                                                                                        class="roof-material-image s-tile">
+                                                                                                    </div>
+                                                                                                    <span>S-Tile</span>
+                                                                                                </label>
+                                                                                            </div>
+                                                                                            <div
+                                                                                                class="roof-material-option">
+                                                                                                <input type="radio"
+                                                                                                    id="w-tile"
+                                                                                                    name="roof_material"
+                                                                                                    value="w-tile">
+                                                                                                <label for="w-tile">
+                                                                                                    <div
+                                                                                                        class="roof-material-image w-tile">
+                                                                                                    </div>
+                                                                                                    <span>W-Tile</span>
+                                                                                                </label>
+                                                                                            </div>
+
+                                                                                            <div
+                                                                                                class="roof-material-option">
+                                                                                                <input type="radio"
+                                                                                                    id="r-panel"
+                                                                                                    name="roof_material"
+                                                                                                    value="r-panel">
+                                                                                                <label for="r-panel">
+                                                                                                    <div
+                                                                                                        class="roof-material-image r-panel">
+                                                                                                    </div>
+                                                                                                    <span>R-Panel</span>
+                                                                                                </label>
+                                                                                            </div>
+                                                                                            <div
+                                                                                                class="roof-material-option">
+                                                                                                <input type="radio"
+                                                                                                    id="standing-seam"
+                                                                                                    name="roof_material"
+                                                                                                    value="standing-seam">
+                                                                                                <label
+                                                                                                    for="standing-seam">
+                                                                                                    <div
+                                                                                                        class="roof-material-image standing-seam">
+                                                                                                    </div>
+                                                                                                    <span>Standing-Seam</span>
+                                                                                                </label>
+                                                                                            </div>
+                                                                                            <div
+                                                                                                class="roof-material-option">
+                                                                                                <input type="radio"
+                                                                                                    id="rolled-comp"
+                                                                                                    name="roof_material"
+                                                                                                    value="rolled-comp">
+                                                                                                <label
+                                                                                                    for="rolled-comp">
+                                                                                                    <div
+                                                                                                        class="roof-material-image rolled-comp">
+                                                                                                    </div>
+                                                                                                    <span>Rolled-Comp</span>
+                                                                                                </label>
+                                                                                            </div>
+                                                                                            <div
+                                                                                                class="roof-material-option">
+                                                                                                <input type="radio"
+                                                                                                    id="other"
+                                                                                                    name="roof_material"
+                                                                                                    value="other">
+                                                                                                <label for="other">
+                                                                                                    <div
+                                                                                                        class="roof-material-image other">
+                                                                                                    </div>
+                                                                                                    <span>Other</span>
+                                                                                                </label>
+                                                                                                <!-- Enabled when Roof Material is selected to (others) -->
+                                                                                                <div class="other-input-container"
+                                                                                                    style="display: none;">
+                                                                                                    <label
+                                                                                                        for="other-material-input"
+                                                                                                        class="form-label">Specify
+                                                                                                        Material:</label>
+                                                                                                    <input
+                                                                                                        name="roof_material"
+                                                                                                        type="text"
+                                                                                                        id="other-material-input"
+                                                                                                        class="form-control"
+                                                                                                        placeholder="Enter material">
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+
+                                                                                <div class="row">
+                                                                                    <div class="col-lg-3 mb-2">
+                                                                                        <div class="mb-3">
+                                                                                            <label
+                                                                                                class="text-label form-label">Roof
+                                                                                                Slope*</label>
+                                                                                            <input type="text"
+                                                                                                name="roof_slope"
+                                                                                                class="form-control"
+                                                                                                id="inputGroupPrepend2"
+                                                                                                aria-describedby="inputGroupPrepend2"
+                                                                                                placeholder="Enter Roof Slope"
+                                                                                                required>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="col-lg-3 mb-2">
+                                                                                        <div class="mb-3">
+                                                                                            <label
+                                                                                                class="text-label form-label">Racking
+                                                                                                Manufacturer</label>
+                                                                                            <input type="text"
+                                                                                                name="racking_manufacturer"
+                                                                                                class="form-control"
+                                                                                                id="inputGroupPrepend2"
+                                                                                                aria-describedby="inputGroupPrepend2"
+                                                                                                placeholder="Enter Racking Manufacturer">
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="col-lg-3 mb-2">
+                                                                                        <div class="mb-3">
+                                                                                            <label
+                                                                                                class="text-label form-label">Racking
+                                                                                                Model</label>
+                                                                                            <input type="text"
+                                                                                                name="racking_model"
+                                                                                                class="form-control"
+                                                                                                id="inputGroupPrepend2"
+                                                                                                aria-describedby="inputGroupPrepend2"
+                                                                                                placeholder="Enter Racking Model">
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="col-lg-3 mb-2">
+                                                                                        <div class="mb-3">
+                                                                                            <label
+                                                                                                class="text-label form-label">Attachment
+                                                                                                Name</label>
+                                                                                            <input type="text"
+                                                                                                name="attachment_name"
+                                                                                                class="form-control"
+                                                                                                id="inputGroupPrepend2"
+                                                                                                aria-describedby="inputGroupPrepend2"
+                                                                                                placeholder="Enter Attachment Name">
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+
+                                                                                <div class="row">
+                                                                                    <div class="col-lg-3">
+                                                                                        <div class="row">
+                                                                                            <div
+                                                                                                class="col-lg-8 pe-0 mb-2">
+                                                                                                <div class="form-group">
+                                                                                                    <label
+                                                                                                        for="attachment-distance"
+                                                                                                        style="font-weight: normal;">Attachment
+                                                                                                        Distance</label>
+                                                                                                    <div class="d-flex">
+                                                                                                        <!-- Yes Radio Button -->
+                                                                                                        <div
+                                                                                                            class="form-check mr-3">
+                                                                                                            <input
+                                                                                                                class="form-check-input"
+                                                                                                                type="radio"
+                                                                                                                name="attachment_distance"
+                                                                                                                id="attachment-distance-48"
+                                                                                                                value="48"
+                                                                                                                checked>
+                                                                                                            <label
+                                                                                                                class="form-check-label"
+                                                                                                                for="attachment-distance-48">
+                                                                                                                48"
+                                                                                                            </label>
+                                                                                                        </div>
+
+                                                                                                        <!-- No Radio Button -->
+                                                                                                        <div
+                                                                                                            class="form-check mr-3">
+                                                                                                            <input
+                                                                                                                class="form-check-input"
+                                                                                                                type="radio"
+                                                                                                                name="attachment_distance"
+                                                                                                                id="attachment-distance-72"
+                                                                                                                value="72">
+                                                                                                            <label
+                                                                                                                class="form-check-label"
+                                                                                                                for="attachment-distance-72">
+                                                                                                                72"
+                                                                                                            </label>
+                                                                                                        </div>
+
+                                                                                                        <!-- Don't Know Radio Button -->
+                                                                                                        <div
+                                                                                                            class="form-check">
+                                                                                                            <input
+                                                                                                                class="form-check-input"
+                                                                                                                type="radio"
+                                                                                                                name="attachment_distance"
+                                                                                                                id="attachment-distance-span-table"
+                                                                                                                value="span-table">
+                                                                                                            <label
+                                                                                                                class="form-check-label"
+                                                                                                                for="attachment-distance-span-table">
+                                                                                                                Span
+                                                                                                                Table
+                                                                                                            </label>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div
+                                                                                                class="col-lg-4 p-0 mb-2">
+                                                                                                <div class="mb-3">
+                                                                                                    <div
+                                                                                                        class="span-length-container">
+                                                                                                        <label
+                                                                                                            for="span-length-input"
+                                                                                                            class="form-label">Span
+                                                                                                            Length</label>
+                                                                                                        <input
+                                                                                                            name="span_length"
+                                                                                                            type="text"
+                                                                                                            id="span-length-input"
+                                                                                                            class="form-control"
+                                                                                                            placeholder="Enter span length">
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="col-lg-3 mb-2">
+                                                                                        <div class="mb-3">
+                                                                                            <label
+                                                                                                class="text-label form-label">Framing
+                                                                                                Type</label>
+                                                                                            <select name="framing_team"
+                                                                                                class="form-control"
+                                                                                                id="inputGroupPrepend2"
+                                                                                                aria-describedby="inputGroupPrepend2">
+                                                                                                <option value=""
+                                                                                                    disabled>Select
+                                                                                                    Framing Type
+                                                                                                </option>
+                                                                                                <option value="trsuu"
+                                                                                                    selected>Truss
+                                                                                                </option>
+                                                                                                <option value="rafter">
+                                                                                                    Rafter</option>
+                                                                                                <option
+                                                                                                    value="eng_truss">
+                                                                                                    Engineered Truss
+                                                                                                </option>
+                                                                                                <option
+                                                                                                    value="stick_frame">
+                                                                                                    Stick Frame</option>
+                                                                                                <option value="purlin">
+                                                                                                    Purlin</option>
+                                                                                            </select>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="col-lg-3 mb-2">
+                                                                                        <div class="mb-3">
+                                                                                            <label
+                                                                                                class="text-label form-label"
+                                                                                                for="framingSizeDropdown">Framing
+                                                                                                Size</label>
+                                                                                            <select name="framing_size"
+                                                                                                class="form-control"
+                                                                                                id="framingSizeDropdown"
+                                                                                                aria-describedby="framingSizeHelp">
+                                                                                                <option value=""
+                                                                                                    disabled>Select
+                                                                                                    Framing Size
+                                                                                                </option>
+                                                                                                <option value="2x9"
+                                                                                                    selected>2" x 9"
+                                                                                                </option>
+                                                                                                <option value="2x10">2"
+                                                                                                    x 10"</option>
+                                                                                                <option value="2x11">2"
+                                                                                                    x 11"</option>
+                                                                                                <option value="2x12">2"
+                                                                                                    x 12"</option>
+                                                                                                <option value="2x13">2"
+                                                                                                    x 13"</option>
+                                                                                                <option value="2x14">2"
+                                                                                                    x 14"</option>
+                                                                                                <option value="2x15">2"
+                                                                                                    x 15"</option>
+                                                                                                <option value="2x16">2"
+                                                                                                    x 16"</option>
+                                                                                                <option value="3x2">3" x
+                                                                                                    2"</option>
+                                                                                                <option value="3x3">3" x
+                                                                                                    3"</option>
+                                                                                                <option value="3x4">3" x
+                                                                                                    4"</option>
+                                                                                                <option value="3x5">3" x
+                                                                                                    5"</option>
+                                                                                                <option value="3x6">3" x
+                                                                                                    6"</option>
+                                                                                                <option value="3x7">3" x
+                                                                                                    7"</option>
+                                                                                                <option value="3x8">3" x
+                                                                                                    8"</option>
+                                                                                                <option value="3x9">3" x
+                                                                                                    9"</option>
+                                                                                                <option value="3x10">3"
+                                                                                                    x 10"</option>
+                                                                                                <option value="3x11">3"
+                                                                                                    x 11"</option>
+                                                                                                <option value="3x12">3"
+                                                                                                    x 12"</option>
+                                                                                                <option value="3x13">3"
+                                                                                                    x 13"</option>
+                                                                                                <option value="3x14">3"
+                                                                                                    x 14"</option>
+                                                                                                <option value="3x15">3"
+                                                                                                    x 15"</option>
+                                                                                                <option value="3x16">3"
+                                                                                                    x 16"</option>
+                                                                                                <option value="4x4">4" x
+                                                                                                    4"</option>
+                                                                                                <option value="4x6">4" x
+                                                                                                    6"</option>
+                                                                                                <option value="4x8">4" x
+                                                                                                    8"</option>
+                                                                                                <option value="4x10">4"
+                                                                                                    x 10"</option>
+                                                                                                <option value="4x16">4"
+                                                                                                    x 16"</option>
+                                                                                            </select>
+                                                                                        </div>
+                                                                                    </div>
+
+                                                                                    <div class="col-lg-3 mb-2">
+                                                                                        <div class="mb-3">
+                                                                                            <label
+                                                                                                class="text-label form-label">Framing
+                                                                                                Spacing</label>
+                                                                                            <select
+                                                                                                name="framing_spacing"
+                                                                                                class="form-control"
+                                                                                                id="inputGroupPrepend2"
+                                                                                                aria-describedby="inputGroupPrepend2">
+                                                                                                <option value=""
+                                                                                                    disabled>Select
+                                                                                                    Framing Size
+                                                                                                </option>
+                                                                                                <option value="8"
+                                                                                                    selected>8"</option>
+                                                                                                <option value="10">10"
+                                                                                                </option>
+                                                                                                <option value="12">12"
+                                                                                                </option>
+                                                                                                <option value="14">14"
+                                                                                                </option>
+                                                                                                <option value="16">16"
+                                                                                                </option>
+                                                                                                <option value="18">18"
+                                                                                                </option>
+                                                                                                <option value="20">20"
+                                                                                                </option>
+                                                                                                <option value="21">21"
+                                                                                                </option>
+                                                                                                <option value="22">22"
+                                                                                                </option>
+                                                                                                <option value="24">14"
+                                                                                                </option>
+                                                                                                <option value="26">26"
+                                                                                                </option>
+                                                                                                <option value="28">28"
+                                                                                                </option>
+                                                                                                <option value="36">36"
+                                                                                                </option>
+                                                                                                <option value="48">48"
+                                                                                                </option>
+                                                                                                <option value="72">72"
+                                                                                                </option>
+                                                                                                <option value="96">96"
+                                                                                                </option>
+                                                                                            </select>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    </div>
+
+                                                                    
+
+                                                                    <div class="row">
+                                                                        <div class="col-xl-6">
+
+                                                                            <div class="card1">
+                                                                                <div class="card-body">
+                                                                                    <div class="profile-interest">
+                                                                                        <h5
+                                                                                            class="text-primary d-inline">
+                                                                                            Roof Top photos</h5>
+                                                                                        <div class="row mt-4">
+                                                                                            <div class="col-lg-12">
+                                                                                                <div id="upload-container-roof-top"
+                                                                                                    class="d-flex"
+                                                                                                    style="overflow-x: auto;width: 100%; gap: 10px; border-radius: 5px; padding: 10px;padding-top: 15px; height: 140px; border: 1px solid #dbd6d6; justify-content: center;">
+                                                                                                    <div id="upload-button-roof-top"
+                                                                                                        style="min-width: 100px; width: 120px; margin: 0; height: 100px; border: 2px dashed #ccc; display: flex; justify-content: center; align-items: center; cursor: pointer; text-align: center; border-radius: 5px;">
+                                                                                                        <span>+ click to
+                                                                                                            add or drop
+                                                                                                            here</span>
+                                                                                                    </div>
+                                                                                                    <div id="preview-container-roof-top"
+                                                                                                        class="d-flex flex-nowrap"
+                                                                                                        style="gap: 10px; overflow-x: auto;overflow-y: hidden; width: 80%; margin: 0; padding: 0;">
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <input type="file"
+                                                                                                    id="image-input-roof-top"
+                                                                                                    multiple
+                                                                                                    name="roof_photos"
+                                                                                                    style="display: none;">
+                                                                                                <div id="file-count-roof-top"
+                                                                                                    class="mt-2">0 files
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-xl-6">
+
+                                                                            <div class="card1">
+                                                                                <div class="card-body">
+                                                                                    <div class="profile-interest">
+                                                                                        <h5
+                                                                                            class="text-primary d-inline">
+                                                                                            Attic Photos</h5>
+                                                                                        <div class="row mt-4">
+                                                                                            <div class="col-lg-12">
+                                                                                                <div id="upload-container-attic-pics"
+                                                                                                    class="d-flex"
+                                                                                                    style="overflow-x: auto;width: 100%; gap: 10px; border-radius: 5px; padding: 10px;padding-top: 15px; height: 140px; border: 1px solid #dbd6d6; justify-content: center;">
+                                                                                                    <div id="upload-button-attic-pics"
+                                                                                                        style="min-width: 100px; width: 120px; margin: 0; height: 100px; border: 2px dashed #ccc; display: flex; justify-content: center; align-items: center; cursor: pointer; text-align: center; border-radius: 5px;">
+                                                                                                        <span>+ click to
+                                                                                                            add or drop
+                                                                                                            here</span>
+                                                                                                    </div>
+                                                                                                    <div id="preview-container-attic-pics"
+                                                                                                        class="d-flex flex-nowrap"
+                                                                                                        style="gap: 10px; overflow-x: auto;overflow-y: hidden; width: 80%; margin: 0; padding: 0;">
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <input type="file"
+                                                                                                    id="image-input-attic-pics"
+                                                                                                    multiple
+                                                                                                    name="attic_photos"
+                                                                                                    style="display: none;">
+                                                                                                <div id="file-count-attic-pics"
+                                                                                                    class="mt-2">0 files
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- form page 3  -->
+                                    <div class="tab-pane form-page" id="electrical-info">
+                                        <div class="pt-4">
+                                            <div class="col-lg-12">
+                                                <div class="row">
+                                                    <div class="col-lg-3 mb-2">
+                                                        <div class="mb-3">
+                                                            <label class="text-label form-label">Meter Number*</label>
+                                                            <input name="meter_number" type="text" class="form-control"
+                                                                id="inputGroupPrepend2"
+                                                                aria-describedby="inputGroupPrepend2"
+                                                                placeholder="Enter Roof Slope" required>
+                                                        </div>
+                                                    </div>
+                                                    <div
+                                                        class="col-lg-3 mb-2 p-3 d-flex align-items-center justify-content-center">
+                                                        <div class="mb-3">
+                                                            <div class="form-group">
+                                                                <label for="electrical-service"
+                                                                    style="font-weight: normal;">Electrical
+                                                                    Service*</label>
+                                                                <div class="toggle-container"
+                                                                    data-toggle="electrical-service" required>
+                                                                    <div class="toggle">
+                                                                        <button type="button"
+                                                                            class="toggle-option active"
+                                                                            data-value="overhead">Overhead</button>
+                                                                        <button type="button" class="toggle-option"
+                                                                            data-value="underground">Underground</button>
+                                                                        <div class="sliders"></div>
+                                                                    </div>
+                                                                </div>
+                                                                <input type="hidden" id="electrical-service"
+                                                                    name="electrical_service" value="overhead">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-lg-3 mb-2">
+                                                        <div class="mb-3">
+                                                            <div class="rating-section">
+                                                                <h3>Main Panel Rating*</h3>
+                                                                <div class="rating-options" id="mainPanelRating"
+                                                                    crequired>
+                                                                    <button type="button" class="rating-option"
+                                                                        data-value="100A">100A</button>
+                                                                    <button type="button" class="rating-option"
+                                                                        data-value="125A">125A</button>
+                                                                    <button type="button" class="rating-option"
+                                                                        data-value="150A">150A</button>
+                                                                    <button type="button" class="rating-option"
+                                                                        data-value="200A">200A</button>
+                                                                    <button type="button" class="rating-option"
+                                                                        data-value="225A">225A</button>
+                                                                    <button type="button" class="rating-option"
+                                                                        data-value="400A">400A</button>
+                                                                    <button type="button" class="rating-option"
+                                                                        data-value="other">Other</button>
+
+                                                                    <!-- Enabled when other option is selected -->
+                                                                    <input type="hidden" name="main_panel_rating"
+                                                                        id="mainPanelRatingInput">
+                                                                    <input type="text" name="main_panel_rating"
+                                                                        id="mainPanelRatingOther" class="other-input"
+                                                                        placeholder="Enter other rating"
+                                                                        style="display: none;">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-3 mb-2">
+                                                        <div class="mb-3">
+                                                            <div class="rating-section">
+                                                                <h3>Main Breaker Rating</h3>
+                                                                <div class="rating-options" id="mainBreakerRating">
+                                                                    <button name="main_breaker_rating" type="button"
+                                                                        class="rating-option"
+                                                                        data-value="100A">100A</button>
+                                                                    <button name="main_breaker_rating" type="button"
+                                                                        class="rating-option"
+                                                                        data-value="125A">125A</button>
+                                                                    <button name="main_breaker_rating" type="button"
+                                                                        class="rating-option"
+                                                                        data-value="150A">150A</button>
+                                                                    <button name="main_breaker_rating" type="button"
+                                                                        class="rating-option"
+                                                                        data-value="200A">200A</button>
+                                                                    <button name="main_breaker_rating" type="button"
+                                                                        class="rating-option"
+                                                                        data-value="other">Other</button>
+
+                                                                    <input type="hidden" name="main_breaker_rating"
+                                                                        id="mainBreakerRatingInput">
+                                                                    <input type="text" name="main_breaker_rating"
+                                                                        id="mainBreakerRatingOther" class="other-input"
+                                                                        placeholder="Enter other rating"
+                                                                        style="display: none;">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row">
+                                                    <div class="col-lg-3 mb-2">
+                                                        <div class="mb-3">
+                                                            <label class="text-label form-label">Interconnection
+                                                                Method</label>
+                                                            <select class="form-control" id="interconnectionMethod"
+                                                                name="interconnection_method">
+                                                                <option value="" disabled>Select Interconnection Method
+                                                                </option>
+                                                                <option value="Backfed" selected>Backfed</option>
+                                                                <option value="Supply Side Tap">Supply Side Tap</option>
+                                                                <option value="Load Side Tap">Load Side Tap</option>
+                                                                <option value="Hawaiian Tie-in">Hawaiian Tie-in</option>
+                                                                <option value="Sum Rule">Sum Rule</option>
+                                                                <option value="More">More</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-3 mb-2">
+                                                        <div class="mb-3">
+                                                            <label class="text-label form-label">MSP Conditions</label>
+                                                            <select name="msp_conditions" class="form-control"
+                                                                id="inputGroupPrepend2"
+                                                                aria-describedby="inputGroupPrepend2">
+                                                                <option value="" disabled>Select MSP Conditions</option>
+                                                                <option value="trsuu" selected>Truss</option>
+                                                                <option value="rafter">Rafter</option>
+                                                                <option value="eng_truss">Engineered Truss</option>
+                                                                <option value="stick_frame">Stick Frame</option>
+                                                                <option value="purlin">Purlin</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-3 mb-2">
+                                                        <div class="mb-3">
+                                                            <div class="form-group">
+                                                                <label for="sub-panel" style="font-weight: normal;">Want
+                                                                    to add sub-panel?</label>
+                                                                <div class="toggle-container" data-toggle="sub-panel"
+                                                                    required>
+                                                                    <div class="toggle sub-panel-toggle"
+                                                                        data-selected="no">
+                                                                        <button type="button"
+                                                                            class="toggle-option active"
+                                                                            data-value="no">No</button>
+                                                                        <button type="button" class="toggle-option"
+                                                                            data-value="yes">Yes</button>
+                                                                        <div class="sliders"></div>
+                                                                    </div>
+                                                                </div>
+                                                                <input type="hidden" id="sub-panel" name="add_subpanel"
+                                                                    value="no">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Enabled when (Want to add sub-panel?) is selected yes  -->
+                                                <div id="sub-panel-ratings" style="display: none;">
+                                                    <div class="row">
+                                                        <div class="col-lg-3 mb-2">
+                                                            <div class="mb-3">
+                                                                <div class="rating-section">
+                                                                    <h3>Sub Panel Rating</h3>
+                                                                    <div class="rating-options" id="subPanelRating">
+                                                                        <button type="button" name="sub_panel_rating"
+                                                                            class="rating-option"
+                                                                            data-value="100A">100A</button>
+                                                                        <button type="button" name="sub_panel_rating"
+                                                                            class="rating-option"
+                                                                            data-value="125A">125A</button>
+                                                                        <button type="button" name="sub_panel_rating"
+                                                                            class="rating-option"
+                                                                            data-value="150A">150A</button>
+                                                                        <button type="button" name="sub_panel_rating"
+                                                                            class="rating-option"
+                                                                            data-value="200A">200A</button>
+                                                                        <button type="button" name="sub_panel_rating"
+                                                                            class="rating-option"
+                                                                            data-value="225A">225A</button>
+                                                                        <button type="button" name="sub_panel_rating"
+                                                                            class="rating-option"
+                                                                            data-value="400A">400A</button>
+                                                                        <button type="button" name="sub_panel_rating"
+                                                                            class="rating-option"
+                                                                            data-value="other">Other</button>
+
+                                                                        <!-- Enabled when other option is selected -->
+                                                                        <input type="hidden" name="sub_panel_rating"
+                                                                            id="subPanelRatingInput">
+                                                                        <input name="sub_panel_rating" type="text"
+                                                                            id="subPanelRatingOther" class="other-input"
+                                                                            placeholder="Enter other rating"
+                                                                            style="display: none;">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-3 mb-2">
+                                                            <div class="mb-3">
+                                                                <div class="rating-section">
+                                                                    <h3>Sub Panel Breaker Rating</h3>
+                                                                    <div class="rating-options"
+                                                                        id="subPanelBreakerRating">
+                                                                        <button type="button" name="sub_breaker_rating"
+                                                                            class="rating-option"
+                                                                            data-value="100A">100A</button>
+                                                                        <button type="button" name="sub_breaker_rating"
+                                                                            class="rating-option"
+                                                                            data-value="125A">125A</button>
+                                                                        <button type="button" name="sub_breaker_rating"
+                                                                            class="rating-option"
+                                                                            data-value="150A">150A</button>
+                                                                        <button type="button" name="sub_breaker_rating"
+                                                                            class="rating-option"
+                                                                            data-value="200A">200A</button>
+                                                                        <button type="button" class="rating-option"
+                                                                            data-value="other">Other</button>
+
+                                                                        <!-- Enabled when other option is selected -->
+                                                                        <input type="hidden" name="sub_breaker_rating"
+                                                                            id="subPanelBreakerRatingInput">
+                                                                        <input name="sub_breaker_rating" type="text"
+                                                                            id="subPanelBreakerRatingOther"
+                                                                            class="other-input"
+                                                                            placeholder="Enter other rating"
+                                                                            style="display: none;">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row">
+
+                                                    <div
+                                                        class="col-lg-3 mb-2 p-3 d-flex align-items-center justify-content-center">
+                                                        <div class="mb-3">
+                                                            <div class="form-group">
+                                                                <label for="ac-disconnect"
+                                                                    style="font-weight: normal;">AC Disconnect</label>
+                                                                <div class="toggle-container ac-disconnect-toggle"
+                                                                    data-toggle="ac-disconnect" required>
+                                                                    <div class="toggle" data-selected="no">
+                                                                        <button type="button"
+                                                                            class="toggle-option active"
+                                                                            data-value="no">No</button>
+                                                                        <button type="button" class="toggle-option"
+                                                                            data-value="yes">Yes</button>
+                                                                        <div class="sliders"></div>
+                                                                    </div>
+                                                                </div>
+                                                                <input type="hidden" id="ac-disconnect"
+                                                                    name="ac_disconnect" value="no">
+                                                            </div>
+
+                                                            <!-- Enabled when yes is (AC Disconnect) is selected to yes  -->
+                                                            <div class="mt-4 manufacturer-model ac-disconnect-model"
+                                                                style="display: none;">
+                                                                <input name="mm_ac_disconnect" type="text"
+                                                                    class="form-control mt-2"
+                                                                    placeholder="Manufacturer & Model">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div
+                                                        class="col-lg-3 mb-2 p-3 d-flex align-items-center justify-content-center">
+                                                        <div class="mb-3">
+                                                            <div class="form-group">
+                                                                <label for="combiner-cabinet"
+                                                                    style="font-weight: normal;">Combiner
+                                                                    Cabinet</label>
+                                                                <div class="toggle-container combiner-cabinet-toggle"
+                                                                    data-toggle="combiner-cabinet" required>
+                                                                    <div class="toggle" data-selected="no">
+                                                                        <button type="button"
+                                                                            class="toggle-option active"
+                                                                            data-value="no">No</button>
+                                                                        <button type="button" class="toggle-option"
+                                                                            data-value="yes">Yes</button>
+                                                                        <div class="sliders"></div>
+                                                                    </div>
+                                                                </div>
+                                                                <input type="hidden" id="combiner-cabinet"
+                                                                    name="combiner_cabinet" value="no">
+                                                            </div>
+
+                                                            <!-- Enabled when yes is (Combiner Cabinet) is selected to yes  -->
+                                                            <div class="manufacturer-model combiner-cabinet-model mt-4"
+                                                                style="display: none;">
+                                                                <input name="mm_combiner_cabinet" type="text"
+                                                                    class="form-control mt-2"
+                                                                    placeholder="Manufacturer & Model">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div
+                                                        class="col-lg-3 mb-2 p-3 d-flex align-items-center justify-content-center">
+                                                        <div class="mb-3">
+                                                            <div class="form-group">
+                                                                <label for="production-meter"
+                                                                    style="font-weight: normal;">Production/Revenue
+                                                                    Meter</label>
+                                                                <div class="toggle-container production-meter-toggle"
+                                                                    data-toggle="production-meter" required>
+                                                                    <div class="toggle" data-selected="no">
+                                                                        <button type="button"
+                                                                            class="toggle-option active"
+                                                                            data-value="no">No</button>
+                                                                        <button type="button" class="toggle-option"
+                                                                            data-value="yes">Yes</button>
+                                                                        <div class="sliders"></div>
+                                                                    </div>
+                                                                </div>
+                                                                <input type="hidden" id="production-meter"
+                                                                    name="production_meter" value="no">
+                                                            </div>
+
+                                                            <!-- Enabled when yes is (Production/Revenue Meter) is selected to yes  -->
+                                                            <div class="mt-4 manufacturer-model production-meter-model"
+                                                                style="display: none;">
+                                                                <input name="mm_production_meter" type="text"
+                                                                    class="form-control mt-2"
+                                                                    placeholder="Manufacturer & Model">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+
+                                                <div class="row">
+                                                    <div class="col-lg-4 mb-2">
+
+                                                        <div class="card1">
+                                                            <div class="card-body p-3">
+                                                                <div class="profile-interest">
+                                                                    <h6 class="text-primary d-inline">Meter panel</h6>
+
+                                                                    <!-- Upload Section -->
+                                                                    <div class="row mt-4">
+                                                                        <div class="col-lg-12">
+                                                                            <div id="upload-container-meter-pics"
+                                                                                class="d-flex"
+                                                                                style="overflow-x: auto; width: 100%; gap: 10px; border-radius: 5px; padding: 10px;padding-top: 15px; height: 140px; border: 1px solid #dbd6d6; justify-content: center;">
+                                                                                <div id="upload-button-meter-pics"
+                                                                                    style="min-width: 100px; width: 120px; height: 100px; border: 2px dashed #ccc; display: flex; justify-content: center; align-items: center; cursor: pointer; text-align: center; border-radius: 5px;">
+                                                                                    <span>+ click to add or drop
+                                                                                        here</span>
+                                                                                </div>
+                                                                                <div id="preview-container-meter-pics"
+                                                                                    class="d-flex flex-nowrap"
+                                                                                    style="gap: 10px;overflow-x: scoll;overflow-y: hidden; width: 80%; margin: 0; padding: 0;">
+                                                                                </div>
+                                                                            </div>
+                                                                            <input type="file"
+                                                                                id="image-input-meter-pics" multiple
+                                                                                name="meter_photos"
+                                                                                style="display: none;">
+                                                                            <div id="file-count-meter-pics"
+                                                                                class="mt-2">0 files
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+
+
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-4 mb-2">
+
+                                                        <div class="card1">
+                                                            <div class="card-body p-3">
+                                                                <div class="profile-interest">
+                                                                    <h6 class="text-primary d-inline">Main Panel</h6>
+
+                                                                    <!--  Upload Section -->
+                                                                    <div class="row mt-4">
+                                                                        <div class="col-lg-12">
+                                                                            <div id="upload-container-main-panel-pics"
+                                                                                class="d-flex"
+                                                                                style="overflow-x: auto; width: 100%; gap: 10px; border-radius: 5px; padding: 10px;padding-top: 15px; height: 140px; border: 1px solid #dbd6d6; justify-content: center;">
+                                                                                <div id="upload-button-main-panel-pics"
+                                                                                    style="min-width: 100px; width: 120px; height: 100px; border: 2px dashed #ccc; display: flex; justify-content: center; align-items: center; cursor: pointer; text-align: center; border-radius: 5px;">
+                                                                                    <span>+ click to add or drop
+                                                                                        here</span>
+                                                                                </div>
+                                                                                <div id="preview-container-main-panel-pics"
+                                                                                    class="d-flex flex-nowrap"
+                                                                                    style="gap: 10px;overflow-x: scoll;overflow-y: hidden; width: 80%; margin: 0; padding: 0;">
+                                                                                </div>
+                                                                            </div>
+                                                                            <input type="file"
+                                                                                id="image-input-main-panel-pics"
+                                                                                multiple name="main_panel_photos"
+                                                                                style="display: none;">
+                                                                            <div id="file-count-main-panel-pics"
+                                                                                class="mt-2">0 files
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+
+
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Enabled when (Want to add sub-panel?) is selected yes  -->
+                                                    <div id="sub-panel-photos-section" class="col-lg-4 mb-2">
+                                                        <div class="card1" style="min-height: 250px;">
+                                                            <div class="card-body p-3">
+                                                                <div class="profile-interest">
+                                                                    <h6 class="text-primary d-inline">Sub Panel</h6>
+
+
+                                                                    <div class="row mt-4">
+                                                                        <div class="col-lg-12">
+                                                                            <div id="upload-container-sub-panel-pics"
+                                                                                class="d-flex"
+                                                                                style="overflow-x: auto; width: 100%; gap: 10px; border-radius: 5px; padding: 10px;padding-top: 15px; height: 140px; border: 1px solid #dbd6d6; justify-content: center;">
+                                                                                <div id="upload-button-sub-panel-pics"
+                                                                                    style="min-width: 100px; width: 120px; height: 100px; border: 2px dashed #ccc; display: flex; justify-content: center; align-items: center; cursor: pointer; text-align: center; border-radius: 5px;">
+                                                                                    <span>+ click to add or drop
+                                                                                        here</span>
+                                                                                </div>
+                                                                                <div id="preview-container-sub-panel-pics"
+                                                                                    class="d-flex flex-nowrap"
+                                                                                    style="gap: 10px;overflow-x: scoll;overflow-y: hidden; width: 80%; margin: 0; padding: 0;">
+                                                                                </div>
+                                                                            </div>
+                                                                            <input type="file"
+                                                                                id="image-input-sub-panel-pics" multiple
+                                                                                name="sub_panel_photos"
+                                                                                style="display: none;">
+                                                                            <div id="file-count-sub-panel-pics"
+                                                                                class="mt-2">0 files
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+
+
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                        </div>
+                    </div>
+
+                    <div class="card-footer text-end">
+                        <button class="btn prev-btn btn-secondary mx-1 border-0" type="button"
+                            style="padding: 0.75rem 1.125rem; border-radius: 0.25rem;">Previous</button>
+                        <button class="btn next-btn btn-primary mx-1 border-0" type="button"
+                            style="padding: 0.75rem 1.125rem; border-radius: 0.25rem;">Next</button>
+                    </div>
+
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block additional_js %}
+
+{% endblock %}

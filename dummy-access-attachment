@@ -1,0 +1,98 @@
+// formHandler.js - Form submission logic
+class PropertyFormHandler {
+    constructor() {
+        this.form = document.getElementById('property-form');
+        this.initializeFormSubmission();
+    }
+
+    initializeFormSubmission() {
+        this.form.addEventListener('submit', (e) => this.handleSubmit(e));
+    }
+
+    getUploaderFiles() {
+        const files = {
+            propertyPhotos: FileUploader.getInstance('upload-button-property-photos')?.getFiles() || [],
+            documents: FileUploader.getInstance('upload-button-documents')?.getFiles() || [],
+            // ... get other uploader files as needed
+        };
+        return files;
+    }
+
+    async handleSubmit(e) {
+        e.preventDefault();
+        
+        try {
+            // Get form data
+            const formData = new FormData(this.form);
+            
+            // Get files from all uploaders
+            const uploaderFiles = this.getUploaderFiles();
+            
+            // Add files to FormData
+            Object.entries(uploaderFiles).forEach(([key, files]) => {
+                files.forEach((file, index) => {
+                    formData.append(`${key}[${index}]`, file);
+                });
+            });
+
+            // Add other form fields if needed
+            const additionalData = {
+                propertyName: document.getElementById('property-name').value,
+                propertyType: document.getElementById('property-type').value,
+                // ... other form fields
+            };
+
+            Object.entries(additionalData).forEach(([key, value]) => {
+                formData.append(key, value);
+            });
+
+            // Submit the form
+            const response = await this.submitForm(formData);
+            
+            if (response.success) {
+                this.handleSuccess(response);
+            } else {
+                this.handleError(response);
+            }
+
+        } catch (error) {
+            console.error('Form submission failed:', error);
+            this.handleError(error);
+        }
+    }
+
+    async submitForm(formData) {
+        const response = await fetch('/api/submit-property', {
+            method: 'POST',
+            body: formData
+        });
+        
+        return await response.json();
+    }
+
+    handleSuccess(response) {
+        alert('Form submitted successfully!');
+        // Clear uploaders if needed
+        this.clearUploaders();
+        // Redirect or other success actions
+        window.location.href = '/success-page';
+    }
+
+    handleError(error) {
+        alert('Error submitting form. Please try again.');
+        console.error('Submission error:', error);
+    }
+
+    clearUploaders() {
+        // Clear all uploaders
+        const uploaderIds = [
+            'upload-button-property-photos',
+            'upload-button-documents'
+            // ... other uploader IDs
+        ];
+
+        uploaderIds.forEach(id => {
+            FileUploader.getInstance(id)?.clearFiles();
+        });
+    }
+}
